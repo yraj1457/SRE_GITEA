@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    volumes:
+      - ./gitea:/data
+    networks:
+      - internal
+    expose:
+      - "3000"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./grafana:/var/lib/grafana
+    networks:
+      - internal
+    expose:
+      - "3000"
+
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    volumes:
+      - ./authelia:/config
+    networks:
+      - internal
+    ports:
+      - "9091:9091"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/authelia.conf:/etc/nginx/authelia.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - gitea
+      - grafana
+      - authelia
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge

@@ -1,0 +1,5 @@
+users:
+  admin:
+    password: "<Password>"
+    displayname: "Administrator"
+    email: "admin@localhost"
