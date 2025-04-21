@@ -1,5 +1,6 @@
 This SRE task sets up a self-hosted environment using Docker to deploy:
 
+- Terraform manages the entire infrastructure on an EC2
 - Gitea for Git repository management  
 - Grafana for monitoring and visualization  
 - Authelia for Single Sign-On (SSO) authentication  
@@ -11,27 +12,11 @@ This SRE task sets up a self-hosted environment using Docker to deploy:
 git clone <repo-url>
 cd SRE_GITEA
 
-2. Create required directories
-mkdir -p nginx/conf.d authelia grafana gitea
+2. Make sure you create a terraform.tfvars file for the variable values
 
-3. Add local domains to your /etc/hosts file
-sudo nano /etc/hosts
+3. Run Terraform: 
+terraform init
+terraform plan
+terraform apply
 
-4. Add the following line at the end of the file:
-127.0.0.1 git.localhost grafana.localhost authelia.localhost
-
-5. Generate a password hash for Authelia
-docker run authelia/authelia authelia hash-password '<Password>'
-
-6. Copy the generated hash and update authelia/users_database.yml like so:
-# (Create this file if it doesn't exist)
-
-7. authelia/users_database.yml
-users:
-  admin:
-    password: "<Password>"
-    displayname: "Administrator"
-    email: "admin@localhost"
-
-8. Start all services
-docker-compose up -d
+Note: Terraform provisions the infrastructure and runs the shell script to setup docker with Gitea, Grafan, Authelia and Nginx
